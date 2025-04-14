@@ -1,0 +1,97 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  cpf String @unique
+  password String
+  avatar String?
+  xp Int @default(0)
+  level Int @default(1)
+  deletedAt DateTime?
+
+  UserAchievements UserAchievements[]
+  Preferences Preferences[]
+  Activities Activities[]
+  ActivityParticipants ActivityParticipants[]
+}
+
+model UserAchievements{
+  id String @id @default(uuid())
+  achievements Achievements @relation(fields: [achievementId], references: [id])
+  achievementId String
+  user Users @relation(fields: [userId], references: [id])
+  userId String
+
+}
+
+model Achievements{
+  id String @id @default(uuid())
+  name String
+  criterion String
+  UserAchievements UserAchievements[]
+}
+
+model Preferences{
+  id String @id @default(uuid())
+  user Users @relation(fields: [userId], references: [id])
+  userId String
+  type ActivityTypes @relation(fields: [typeID], references: [id])
+  typeID String
+}
+
+model ActivityTypes{
+  id String @id @default(uuid())
+  name String @unique
+  description String
+  image String
+  Preferences Preferences[]
+  Activities Activities[]
+}
+
+model Activities{
+  id String @id @default(uuid())
+  title String
+  description String
+
+  type ActivityTypes @relation(fields: [typeId], references: [id])
+  typeId String
+  confirmationCode String
+  image String
+  scheduledCode DateTime
+  createAt DateTime
+  deleteAt DateTime?
+  private Boolean
+
+  user Users @relation(fields: [creatorId], references: [id])
+  creatorId String
+  ActivityAddresses ActivityAddresses[]
+  ActivityParticipants ActivityParticipants[]
+}
+
+model ActivityAddresses{
+  id String @id @default(uuid())
+  activitie Activities @relation(fields: [activityId], references: [id])
+  activityId String
+  latitude Float
+  longitude Float
+}
+
+model ActivityParticipants{
+  id String @id @default(uuid())
+  activitie Activities @relation(fields: [activityId], references: [id])
+  activityId String
+  user Users @relation(fields: [userId], references: [id])
+  userId String
+  approved Boolean
+  confirmedAt DateTime?
+}

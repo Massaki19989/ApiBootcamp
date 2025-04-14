@@ -1,0 +1,11 @@
+services:
+  projetobackend2:
+    image: postgres
+    container_name: back-bootcamp
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: back
+
+    ports:
+      - "5432:5432"
